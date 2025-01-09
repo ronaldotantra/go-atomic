@@ -7,6 +7,13 @@ import (
 
 type Executor interface {
 	Run(ctx context.Context, opts *sql.TxOptions, fn func(ctx context.Context) error) error
+	UseTx(ctx context.Context) DBExecutor
+}
+
+type DBExecutor interface {
+	ExecContext(ctx context.Context, query string, args ...interface{}) (sql.Result, error)
+	QueryContext(ctx context.Context, query string, args ...interface{}) (*sql.Rows, error)
+	QueryRowContext(ctx context.Context, query string, args ...interface{}) *sql.Row
 }
 
 type executor struct {
@@ -49,4 +56,13 @@ func (e *executor) Run(ctx context.Context, opts *sql.TxOptions, fn func(ctx con
 
 	tx.Commit()
 	return nil
+}
+
+func (e *executor) UseTx(ctx context.Context) DBExecutor {
+	tx := GetTransactionClient(ctx)
+	if tx == nil {
+		return e.db
+	}
+
+	return tx
 }
