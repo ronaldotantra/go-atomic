@@ -11,7 +11,7 @@ import (
 )
 
 func setupTest(t *testing.T) *executor {
-	dsn := "postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable"
+	dsn := "postgres://postgres:postgres@localhost:5434/postgres?sslmode=disable"
 	db, err := sql.Open("postgres", dsn)
 	assert.NoError(t, err)
 
