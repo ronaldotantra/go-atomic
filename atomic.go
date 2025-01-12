@@ -34,7 +34,9 @@ func (e *executor) Run(ctx context.Context, opts *sql.TxOptions, fn func(ctx con
 	if tx != nil {
 		return fn(ctx)
 	}
-
+	if opts == nil {
+		opts = &sql.TxOptions{}
+	}
 	tx, err := e.db.BeginTx(ctx, opts)
 	if err != nil {
 		return err
